@@ -212,6 +212,7 @@ var giffy = (function() {
             'bottom': '0px',
 
             'left': '0px',
+            
         });
 
 
