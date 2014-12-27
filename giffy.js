@@ -39,8 +39,6 @@ var giffy = (function() {
 
     }
 
-    //FIX ONCLICK FOR THE ELEMENT
-
     function onclick(_elem) {
 
         var imageSource = _elem.getAttribute('data-link'),
@@ -70,6 +68,23 @@ var giffy = (function() {
 
     }
 
+    function preload(_giffyElements) {
+
+        var giffyLink = _giffyElements.getAttribute('data-link'),
+        giffyImage = new Image();
+
+        giffyImage.onload = function(){
+
+            _giffyElements.className += ' preloaded';
+
+            bind( _giffyElements );
+        }
+
+        giffyImage.src = giffyLink;
+
+        
+    }
+
     function onEscape(event) {
 
         if (event.keyCode == 27) {
@@ -97,11 +112,8 @@ var giffy = (function() {
     }
 
     function closeModal() {
-        //close the modalhere
 
-        //console.log('modal has been closed');
-
-        if (modal.classList.contains('active') /*&& check( document.querySelector( '.modal-active' ) )*/ ) {
+        if (modal.classList.contains('active') ) {
 
             console.log('element is alive and needs to be closed');
 
@@ -145,7 +157,12 @@ var giffy = (function() {
     function init() {
 
         createElem();
-        load(el);
+        
+        for( var i = 0; i < el.length; i++ ){
+
+            preload( el[ i ] );
+
+        }
 
 
 
