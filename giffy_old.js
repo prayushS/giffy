@@ -58,7 +58,9 @@ var giffy = (function() {
             closeModal();
 
         } else {
+            
             return;
+            
         }
 
         console.log(getLink);
