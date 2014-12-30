@@ -28,9 +28,10 @@
 	top:0;
 	left:0;
 	opacity:0.99;
-	-khtml-opacity: 0.99;
-	filter:alpha(opacity=0.99);
+	filter:alpha(opacity=99);
 	-ms-filter:"progid:DXImageTransform.Microsoft.Alpha(Opacity=99)";
+	-khtml-opacity: 0.99;
+	-moz-opacity:0.99;
 	cursor:pointer;
 }
 
