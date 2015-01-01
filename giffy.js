@@ -187,15 +187,7 @@ var giffy = (function() {
 
         }, false );
 
-        _element.addEventListener( 'keyup', function( event ){
-
-            event.stopPropagation();
-
-            event.preventDefault();
-
-            onEscape();
-
-        } , false );
+        _element.addEventListener('keyup', onEscape, false);
 
         overlay.addEventListener('click', function( event){
 
