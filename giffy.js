@@ -5,11 +5,15 @@ var giffy = (function() {
 
     var el = document.querySelectorAll('.giffy'),
 
-        modal, //inactive
+        modal,
 
         overlay,
 
+        giffyWrapper,
+
         loadedImage;
+    
+
 
     function apply(element, properties) {
 
@@ -28,16 +32,24 @@ var giffy = (function() {
 
         modal = document.createElement('div');
 
+        giffyWrapper = document.createElement('div');
+
         overlay.className = 'overlay';
 
-        modal.className = 'modal-inactive';
+        modal.className = 'modal';
 
-        overlay.appendChild(modal);
+        giffyWrapper.className = 'giffyWrapper';
 
-        document.body.appendChild(overlay);
+        giffyWrapper.appendChild(overlay);
+
+        giffyWrapper.appendChild( modal );
+
+       document.body.appendChild( giffyWrapper );
 
 
     }
+
+    //FIX ONCLICK FOR THE ELEMENT
 
     function onclick(_elem) {
 
@@ -50,10 +62,31 @@ var giffy = (function() {
             image.height = this.height;
             image.width = this.width;
 
-            apply(modal, {
+            apply( modal, {
+
                 'height': image.height + 'px',
-                'width': image.width + 'px'
+
+                'width': image.width + 'px',
+
+                'position': 'absolute',
+
+                'top': '0px',
+
+                'right': '0px',
+
+                'bottom': '0px',
+
+                'left': '0px',
+
+                'margin':'auto',
+
+                'float':'none'
+                
             });
+
+            apply( image, {
+                'float':'none'
+            } );
 
 
 
@@ -101,29 +134,32 @@ var giffy = (function() {
 
     function addClass(element, classname) {
 
-        element.classList.add(classname);
+
+        element.className += ' '+classname;
 
     }
 
     function removeClass(element, classname) {
 
-        element.classList.remove(classname);
+
+        element.className = element.className.replace( classname, '' );
 
     }
 
     function closeModal() {
 
-        if (modal.classList.contains('active') ) {
+        if ( modal.classList.contains('active') ) {
 
             console.log('element is alive and needs to be closed');
 
             removeClass(modal, 'active');
+
             removeClass(overlay, 'overlay-active');
 
             //remove the element
-            loadedImage = document.querySelector('#loadedImage');
+            loadedImage = document.getElementById('loadedImage');
 
-            modal.removeChild(loadedImage);
+            loadedImage.parentNode.removeChild( loadedImage );
 
             modal.removeAttribute('style');
 
@@ -131,16 +167,17 @@ var giffy = (function() {
 
 
         } else {
+
             console.log('element is not alive');
 
-            return; //do nothing since noting has been opened nor closed.
+            return;
         }
     }
 
 
     function bind(_element) {
         //handle the events
-        _element.addEventListener('click', function(event) {
+        _element.addEventListener( 'click', function( event ) {
 
             event.stopPropagation();
             event.preventDefault();
@@ -148,9 +185,28 @@ var giffy = (function() {
             onclick(this);
 
 
+        }, false );
+
+        _element.addEventListener( 'keyup', function( event ){
+
+            event.stopPropagation();
+
+            event.preventDefault();
+
+            onEscape();
+
+        } , false );
+
+        overlay.addEventListener('click', function( event){
+
+            event.stopPropagation();
+
+            event.preventDefault();
+
+            closeModal();
+
+
         }, false);
-        _element.addEventListener('keyup', onEscape, false);
-        overlay.addEventListener('click', closeModal, false);
 
     }
 
@@ -186,7 +242,7 @@ var giffy = (function() {
 
     function openModal(getImage) {
 
-        console.log('modal has been opened');
+        if( !modal.hasChildNodes() ){
 
         modal.appendChild(getImage);
 
@@ -194,18 +250,9 @@ var giffy = (function() {
 
         addClass(overlay, 'overlay-active');
 
-        apply(modal, {
-
-            'position': 'absolute',
-
-            'top': '0px',
-
-            'right': '0px',
-
-            'bottom': '0px',
-
-            'left': '0px'
-        });
+}else{
+    return;
+}
 
 
 
