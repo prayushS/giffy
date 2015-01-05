@@ -5,14 +5,40 @@ var giffy = (function() {
 
     var el = document.querySelectorAll('.giffy'),
 
-        modal,
+        modal, //inactive
 
         overlay,
+
+        overlayStyles = {
+
+            '-moz-box-sizing': 'content-box',
+            '-webkit-box-sizing': 'content-box',
+            'box-sizing': 'content-box',
+            'display': 'block',
+            'height': '100%',
+            'max-height': '100%',
+            'width': '100%',
+            'max-width': '100%',
+            'background-color': '#000',
+            'margin': '0px auto',
+            'padding': '0px',
+            'position': 'fixed',
+            'top': '0',
+            'left': '0',
+            'opacity': '0.99',
+            'filter': 'alpha(opacity=99)',
+            '-ms-filter': "progid:DXImageTransform.Microsoft.Alpha(Opacity=99)",
+            '-khtml-opacity': '0.99',
+            '-moz-opacity': '0.99',
+            'cursor': 'pointer',
+            'visibility': 'visible'
+      
+        },
 
         giffyWrapper,
 
         loadedImage;
-    
+
 
 
     function apply(element, properties) {
@@ -42,9 +68,10 @@ var giffy = (function() {
 
         giffyWrapper.appendChild(overlay);
 
-        giffyWrapper.appendChild( modal );
+        giffyWrapper.appendChild(modal);
 
-       document.body.appendChild( giffyWrapper );
+
+        document.body.appendChild(giffyWrapper);
 
 
     }
@@ -62,7 +89,21 @@ var giffy = (function() {
             image.height = this.height;
             image.width = this.width;
 
-            apply( modal, {
+            apply(modal, {
+
+                '-moz-box-sizing': 'content-box',
+
+                '-webkit-box-sizing': 'content-box',
+
+                'box-sizing': 'content-box',
+
+                'display': 'block',
+
+                'background-color': '#222',
+
+                'border': '5px solid #fff',
+
+                'cursor': 'default',
 
                 'height': image.height + 'px',
 
@@ -78,15 +119,15 @@ var giffy = (function() {
 
                 'left': '0px',
 
-                'margin':'auto',
+                'margin': 'auto',
 
-                'float':'none'
-                
+                'float': 'none'
+
             });
 
-            apply( image, {
-                'float':'none'
-            } );
+            apply(image, {
+                'float': 'none'
+            });
 
 
 
@@ -104,18 +145,18 @@ var giffy = (function() {
     function preload(_giffyElements) {
 
         var giffyLink = _giffyElements.getAttribute('data-link'),
-        giffyImage = new Image();
+            giffyImage = new Image();
 
-        giffyImage.onload = function(){
+        giffyImage.onload = function() {
 
             _giffyElements.className += ' preloaded';
 
-            bind( _giffyElements );
+            bind(_giffyElements);
         }
 
         giffyImage.src = giffyLink;
 
-        
+
     }
 
     function onEscape(event) {
@@ -134,21 +175,20 @@ var giffy = (function() {
 
     function addClass(element, classname) {
 
-
-        element.className += ' '+classname;
+        element.className += ' ' + classname;
 
     }
 
     function removeClass(element, classname) {
 
-
-        element.className = element.className.replace( classname, '' );
+        element.className = element.className.replace(classname, '');
 
     }
 
     function closeModal() {
+        //close the modalhere
 
-        if ( modal.classList.contains('active') ) {
+        if (modal.classList.contains('active')) {
 
             console.log('element is alive and needs to be closed');
 
@@ -156,12 +196,13 @@ var giffy = (function() {
 
             removeClass(overlay, 'overlay-active');
 
-            //remove the element
             loadedImage = document.getElementById('loadedImage');
 
-            loadedImage.parentNode.removeChild( loadedImage );
+            loadedImage.parentNode.removeChild(loadedImage);
 
             modal.removeAttribute('style');
+
+            overlay.removeAttribute('style');
 
             console.log(modal);
 
@@ -177,7 +218,7 @@ var giffy = (function() {
 
     function bind(_element) {
         //handle the events
-        _element.addEventListener( 'click', function( event ) {
+        _element.addEventListener('click', function(event) {
 
             event.stopPropagation();
             event.preventDefault();
@@ -185,11 +226,11 @@ var giffy = (function() {
             onclick(this);
 
 
-        }, false );
+        }, false);
 
-        _element.addEventListener('keyup', onEscape, false);
+        window.addEventListener('keyup', onEscape, false);
 
-        overlay.addEventListener('click', function( event){
+        overlay.addEventListener('click', function(event) {
 
             event.stopPropagation();
 
@@ -205,10 +246,10 @@ var giffy = (function() {
     function init() {
 
         createElem();
-        
-        for( var i = 0; i < el.length; i++ ){
 
-            preload( el[ i ] );
+        for (var i = 0; i < el.length; i++) {
+
+            preload(el[i]);
 
         }
 
@@ -234,17 +275,19 @@ var giffy = (function() {
 
     function openModal(getImage) {
 
-        if( !modal.hasChildNodes() ){
+        if (!modal.hasChildNodes()) {
 
-        modal.appendChild(getImage);
+            modal.appendChild(getImage);
 
-        addClass(modal, 'active');
+            addClass(modal, 'active');
 
-        addClass(overlay, 'overlay-active');
+            addClass(overlay, 'overlay-active');
 
-}else{
-    return;
-}
+            apply(overlay, overlayStyles);
+
+        } else {
+            return;
+        }
 
 
 
