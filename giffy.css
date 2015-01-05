@@ -35,7 +35,7 @@
 	cursor:pointer;
 }
 
-.overlay, .modal-inactive,.overlay-active,.active{
+.overlay, .modal-inactive,.overlay-active, .active{
 	-webkit-box-sizing:content-box;
 	-moz-box-sizing:content-box;
 	box-sizing:content-box;
