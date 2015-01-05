@@ -17,7 +17,7 @@ To use giffy, simply modify the anchor tag by adding a class of giffy, and setti
 
 <h3>CSS</h3>
 
-To customize giffy, you can either edit the giffy.css file or create another css file targeting the giffy elements.
+To customize giffy, you can create another css file which targets the giffy elements
 
 ```css
 
