@@ -4,7 +4,7 @@ Giffy is a library which allows you to open special image links as modals.
 
 <h3>Instructions</h3>
 
-Giffy does not require any other external libraries to use. To use the library, simply download and link the giffy.css and giffy.js files. To custom style the giffy elements or the modal, simply edit the giffy.css/ giffy.js or create another stylesheet and link it to the main page.
+Giffy does not require any other external libraries to use. To use the library, simply download and link the giffy.js file and initialize giffy. To custom style the giffy elements or the modal, simply edit the giffy.js or create another stylesheet and link it to the main page.
 
 <h3>HTML</h3>
 
