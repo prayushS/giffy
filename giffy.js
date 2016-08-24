@@ -1,200 +1,114 @@
-// a plugin that basically allows you to click on image links and view them on a modal
-// like imgur
-var giffy = (function() {
+var giffy = (function(g) {
+
     'use strict';
 
     var el = document.querySelectorAll('.giffy'),
-
-        modal, //inactive
-
+        modal,
         overlay,
-
-        overlayStyles = {
-
-            '-moz-box-sizing': 'content-box',
-            '-webkit-box-sizing': 'content-box',
-            'box-sizing': 'content-box',
-            'display': 'block',
-            'height': '100%',
-            'max-height': '100%',
-            'width': '100%',
-            'max-width': '100%',
-            'background-color': '#000',
-            'margin': '0px auto',
-            'padding': '0px',
-            'position': 'fixed',
-            'top': '0',
-            'left': '0',
-            'opacity': '0.99',
-            'filter': 'alpha(opacity=99)',
-            '-ms-filter': "progid:DXImageTransform.Microsoft.Alpha(Opacity=99)",
-            '-khtml-opacity': '0.99',
-            '-moz-opacity': '0.99',
-            'cursor': 'pointer',
-            'visibility': 'visible'
-      
-        },
-
         giffyWrapper,
+        loadedImage,
+        styles = [],
 
-        loadedImage;
+        UI = {
 
+            applyCss: function(element, properties) {
 
+                for (var key in properties) {
 
-    function apply(element, properties) {
+                    element.style[key] = properties[key];
 
-        for (var key in properties) {
+                }
+            },
 
-            element.style[key] = properties[key];
+            addClass: function(element, className) {
 
-
-        }
-
-    }
-
-    function createElem() {
-
-        overlay = document.createElement('div');
-
-        modal = document.createElement('div');
-
-        giffyWrapper = document.createElement('div');
-
-        overlay.className = 'overlay';
-
-        modal.className = 'modal';
-
-        giffyWrapper.className = 'giffyWrapper';
-
-        giffyWrapper.appendChild(overlay);
-
-        giffyWrapper.appendChild(modal);
+                element.className += className + " ";
 
 
-        document.body.appendChild(giffyWrapper);
+            },
+
+            removeClass: function(element, className) {
+
+                element.className = element.className.replace(className, '');
+
+            }
+        };
+    styles['overlay'] = {
+        'height': '100%',
+        'max-height': '100%',
+        'width': '100%',
+        'max-width': '100%',
+        'background-color': '#000',
+        'margin': '0px auto',
+        'padding': '0px',
+        'position': 'fixed',
+        'top': '0',
+        'left': '0',
+        'opacity': '0.99',
+        'filter': 'alpha(opacity=99)',
+        '-ms-filter': "progid:DXImageTransform.Microsoft.Alpha(Opacity=99)",
+        '-khtml-opacity': '0.99',
+        '-moz-opacity': '0.99',
+        'cursor': 'pointer',
+        'visibility': 'visible'
+
+    };
+
+    styles['sharedStyles'] = {
+
+        '-moz-box-sizing': 'content-box',
+        '-webkit-box-sizing': 'content-box',
+        'box-sizing': 'content-box',
+        'display': 'block'
+
+    };
 
 
-    }
 
-    //FIX ONCLICK FOR THE ELEMENT
+    g = {
 
-    function onclick(_elem) {
+        version: 1.01,
 
-        var imageSource = _elem.getAttribute('data-link'),
-            image = new Image();
-        image.id = 'loadedImage';
-        image.onload = function() {
+        init: function() {
+            //main function
 
+            createGiffyElement();
 
-            image.height = this.height;
-            image.width = this.width;
+            for (var i = 0; i < el.length; i++) {
 
-            apply(modal, {
+                preload(el[i]);
 
-                '-moz-box-sizing': 'content-box',
-
-                '-webkit-box-sizing': 'content-box',
-
-                'box-sizing': 'content-box',
-
-                'display': 'block',
-
-                'background-color': '#222',
-
-                'border': '5px solid #fff',
-
-                'cursor': 'default',
-
-                'height': image.height + 'px',
-
-                'width': image.width + 'px',
-
-                'position': 'absolute',
-
-                'top': '0px',
-
-                'right': '0px',
-
-                'bottom': '0px',
-
-                'left': '0px',
-
-                'margin': 'auto',
-
-                'float': 'none'
-
-            });
-
-            apply(image, {
-                'float': 'none'
-            });
-
-
+            }
 
         }
 
-        image.src = imageSource;
-
-
-        openModal(image);
-
-
-
     }
 
-    function preload(_giffyElements) {
+    UI.openModal = function(getImage) {
+        if (!modal.hasChildNodes()) {
 
-        var giffyLink = _giffyElements.getAttribute('data-link'),
-            giffyImage = new Image();
+            modal.appendChild(getImage);
 
-        giffyImage.onload = function() {
+            UI.addClass(document.body, 'giffy-active');
+            UI.addClass(modal, 'active');
 
-            _giffyElements.className += ' preloaded';
+            UI.addClass(overlay, 'overlay-active');
 
-            bind(_giffyElements);
-        }
-
-        giffyImage.src = giffyLink;
-
-
-    }
-
-    function onEscape(event) {
-
-        if (event.keyCode == 27) {
-
-            closeModal();
+            UI.applyCss(overlay, styles['overlay']);
 
         } else {
             return;
         }
+    };
 
-
-
-    }
-
-    function addClass(element, classname) {
-
-        element.className += ' ' + classname;
-
-    }
-
-    function removeClass(element, classname) {
-
-        element.className = element.className.replace(classname, '');
-
-    }
-
-    function closeModal() {
-        //close the modalhere
+    UI.closeModal = function() {
 
         if (modal.classList.contains('active')) {
 
-            console.log('element is alive and needs to be closed');
+            UI.removeClass(document.body, 'giffy-active');
+            UI.removeClass(modal, 'active');
 
-            removeClass(modal, 'active');
-
-            removeClass(overlay, 'overlay-active');
+            UI.removeClass(overlay, 'overlay-active');
 
             loadedImage = document.getElementById('loadedImage');
 
@@ -204,31 +118,35 @@ var giffy = (function() {
 
             overlay.removeAttribute('style');
 
-            console.log(modal);
-
 
         } else {
 
-            console.log('element is not alive');
+            //console.log('element is not alive');
 
             return;
         }
-    }
 
+    };
 
-    function bind(_element) {
+    UI.bind = function(_element) {
+
         //handle the events
         _element.addEventListener('click', function(event) {
 
             event.stopPropagation();
             event.preventDefault();
 
-            onclick(this);
+            displayGiffyImage(this);
 
 
         }, false);
 
-        window.addEventListener('keyup', onEscape, false);
+        window.addEventListener('keyup', function(event) {
+
+            //console.log(document.activeElement)
+            escape(event);
+
+        }, false);
 
         overlay.addEventListener('click', function(event) {
 
@@ -236,71 +154,127 @@ var giffy = (function() {
 
             event.preventDefault();
 
-            closeModal();
+            UI.closeModal();
 
 
         }, false);
 
-    }
 
-    function init() {
+        var escape = function(event) {
 
-        createElem();
+            var activeElement = document.activeElement;
 
-        for (var i = 0; i < el.length; i++) {
+            //console.log(activeElement);
 
-            preload(el[i]);
+            if (event.keyCode == 27 && activeElement.classList[0] == "giffy" || activeElement.classList[0] == "giffy-active") {
 
-        }
+                UI.closeModal();
 
-
-
-    }
-
-    function load(_elem) {
-
-
-        if (_elem.length) {
-
-            for (var i = 0; i < _elem.length; i++) {
-
-                bind(_elem[i]);
-
+            } else {
+                return;
             }
-        } else {
-            return;
-        }
 
-    }
-
-    function openModal(getImage) {
-
-        if (!modal.hasChildNodes()) {
-
-            modal.appendChild(getImage);
-
-            addClass(modal, 'active');
-
-            addClass(overlay, 'overlay-active');
-
-            apply(overlay, overlayStyles);
-
-        } else {
-            return;
         }
 
 
 
-
-    }
-
-
-
-
-    return {
-        init: init
     };
 
+    //helper functions
+
+    var createGiffyElement = function() {
+
+            overlay = document.createElement('div');
+
+            modal = document.createElement('div');
+
+            giffyWrapper = document.createElement('div');
+
+            UI.addClass(overlay, 'overlay');
+
+            UI.addClass(modal, 'modal');
+
+            UI.addClass(giffyWrapper, 'giffyWrapper');
+
+            giffyWrapper.appendChild(overlay);
+
+            giffyWrapper.appendChild(modal);
 
 
-})();
+            document.body.appendChild(giffyWrapper);
+
+        },
+
+        preload = function(_giffyElements) {
+
+            var giffyLink = _giffyElements.getAttribute('data-link'),
+
+                giffyImage = new Image();
+
+            giffyImage.onload = function() {
+
+                UI.addClass(_giffyElements, ' preloaded');
+
+                UI.bind(_giffyElements);
+            }
+
+            giffyImage.src = giffyLink;
+        },
+
+        displayGiffyImage = function(_elem) {
+
+            var imageSource = _elem.getAttribute('data-link'),
+                image = new Image();
+            image.id = 'loadedImage';
+            image.onload = function() {
+                image.height = this.height;
+                image.width = this.width;
+                //console.log('works');
+                UI.applyCss(modal, styles['sharedStyles']);
+                UI.applyCss(modal, {
+
+                    'display': 'block',
+
+                    'background-color': '#222',
+
+                    'border': '5px solid #fff',
+
+                    'cursor': 'default',
+
+                    'height': image.height + 'px',
+
+                    'width': image.width + 'px',
+
+                    'position': 'absolute',
+
+                    'top': '0px',
+
+                    'right': '0px',
+
+                    'bottom': '0px',
+
+                    'left': '0px',
+
+                    'margin': 'auto',
+
+                    'float': 'none'
+
+                });
+                UI.applyCss(image, {
+                    'float': 'none'
+                });
+
+            }
+            image.src = imageSource;
+            UI.openModal(image);
+            UI.applyCss(overlay, styles['sharedStyles']);
+            UI.applyCss(overlay, styles['overlay']);
+
+
+
+        };
+
+
+    return g;
+
+})(giffy);
